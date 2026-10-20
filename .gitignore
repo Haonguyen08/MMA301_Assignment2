@@ -1,0 +1,31 @@
+# dependencies
+node_modules/
+MMA301_Assignment2/node_modules/
+
+# Expo & Metro
+.expo/
+MMA301_Assignment2/.expo/
+dist/
+web-build/
+.metro-health-check*
+
+# Environment / Secrets
+.env
+.env*.local
+*.key
+*.pem
+
+# Android / iOS builds
+MMA301_Assignment2/android/
+MMA301_Assignment2/ios/
+*.jks
+*.keystore
+
+# Logs
+*.log
+npm-debug.*
+yarn-debug.*
+
+# OS files
+.DS_Store
+Thumbs.db
