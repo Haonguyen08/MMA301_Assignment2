@@ -1,6 +1,5 @@
 import React from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
 
 export const CartItem = ({ item, onUpdateQuantity, onRemove }) => {
   return (
@@ -9,7 +8,7 @@ export const CartItem = ({ item, onUpdateQuantity, onRemove }) => {
         <Image source={{ uri: item.thumbnail }} style={styles.image} resizeMode="cover" />
       ) : (
         <View style={[styles.image, styles.noImage]}>
-          <Ionicons name="image-outline" size={24} color="#94A3B8" />
+          <Text style={styles.noImageText}>Ảnh</Text>
         </View>
       )}
 
@@ -23,7 +22,7 @@ export const CartItem = ({ item, onUpdateQuantity, onRemove }) => {
             onPress={() => onRemove(item.id)}
             hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
           >
-            <Ionicons name="trash-outline" size={18} color="#EF4444" />
+            <Text style={styles.deleteText}>Xóa</Text>
           </TouchableOpacity>
         </View>
 
@@ -35,7 +34,7 @@ export const CartItem = ({ item, onUpdateQuantity, onRemove }) => {
               style={styles.stepBtn}
               onPress={() => onUpdateQuantity(item.id, item.quantity - 1)}
             >
-              <Ionicons name="remove" size={16} color="#334155" />
+              <Text style={styles.stepSign}>-</Text>
             </TouchableOpacity>
 
             <Text style={styles.quantityText}>{item.quantity}</Text>
@@ -44,7 +43,7 @@ export const CartItem = ({ item, onUpdateQuantity, onRemove }) => {
               style={styles.stepBtn}
               onPress={() => onUpdateQuantity(item.id, item.quantity + 1)}
             >
-              <Ionicons name="add" size={16} color="#334155" />
+              <Text style={styles.stepSign}>+</Text>
             </TouchableOpacity>
           </View>
 
@@ -78,6 +77,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  noImageText: {
+    color: '#94A3B8',
+    fontSize: 11,
+  },
   details: {
     flex: 1,
     marginLeft: 12,
@@ -95,7 +98,15 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   deleteButton: {
-    padding: 2,
+    paddingVertical: 2,
+    paddingHorizontal: 6,
+    backgroundColor: '#FEE2E2',
+    borderRadius: 4,
+  },
+  deleteText: {
+    color: '#DC2626',
+    fontSize: 12,
+    fontWeight: '600',
   },
   price: {
     fontSize: 13,
@@ -117,8 +128,13 @@ const styles = StyleSheet.create({
     borderColor: '#CBD5E1',
   },
   stepBtn: {
-    paddingHorizontal: 8,
+    paddingHorizontal: 10,
     paddingVertical: 4,
+  },
+  stepSign: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: '#334155',
   },
   quantityText: {
     fontSize: 13,

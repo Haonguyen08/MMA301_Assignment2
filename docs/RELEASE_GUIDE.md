@@ -1,8 +1,8 @@
 # HƯỚNG DẪN ĐÓNG GÓI BẢN RELEASE & BẰNG CHỨNG XUẤT BUNDLE (RELEASE EVIDENCE)
 
-> **Môn học:** MMA301 – Multiplatform Mobile App Development  
-> **Dự án:** MMA301 E-Commerce Mobile Application  
-> **Yêu cầu:** Đáp ứng tiêu chí R12 (Release build / Production verification).
+- Môn học: MMA301 – Multiplatform Mobile App Development  
+- Dự án: MMA301 E-Commerce Mobile Application  
+- Yêu cầu: Đáp ứng tiêu chí R12 (Release build / Production verification).
 
 ---
 

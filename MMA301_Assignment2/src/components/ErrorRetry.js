@@ -1,16 +1,13 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
 
 export const ErrorRetry = ({ message = 'Đã có lỗi xảy ra.', onRetry }) => {
   return (
     <View style={styles.container}>
-      <Ionicons name="alert-circle-outline" size={56} color="#EF4444" />
       <Text style={styles.title}>Không thể tải dữ liệu</Text>
       <Text style={styles.message}>{message}</Text>
       {onRetry && (
         <TouchableOpacity style={styles.button} onPress={onRetry} activeOpacity={0.8}>
-          <Ionicons name="reload-outline" size={18} color="#FFFFFF" style={{ marginRight: 6 }} />
           <Text style={styles.buttonText}>Thử lại</Text>
         </TouchableOpacity>
       )}
@@ -43,7 +40,6 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   button: {
-    flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#DC2626',
     paddingVertical: 10,

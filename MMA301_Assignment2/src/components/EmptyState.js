@@ -1,9 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
 
 export const EmptyState = ({
-  icon = 'basket-outline',
   title = 'Không có dữ liệu',
   message = 'Chưa có mục nào trong danh sách này.',
   buttonText,
@@ -11,9 +9,6 @@ export const EmptyState = ({
 }) => {
   return (
     <View style={styles.container}>
-      <View style={styles.iconCircle}>
-        <Ionicons name={icon} size={48} color="#94A3B8" />
-      </View>
       <Text style={styles.title}>{title}</Text>
       <Text style={styles.message}>{message}</Text>
       {buttonText && onPressButton && (
@@ -32,15 +27,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 32,
     backgroundColor: '#F8FAFC',
-  },
-  iconCircle: {
-    width: 90,
-    height: 90,
-    borderRadius: 45,
-    backgroundColor: '#E2E8F0',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 16,
   },
   title: {
     fontSize: 18,
