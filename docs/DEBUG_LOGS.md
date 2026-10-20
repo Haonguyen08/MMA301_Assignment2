@@ -1,18 +1,18 @@
 # NHẬT KÝ SỬA LỖI (DEBUG LOGS – 2 BÀI TOÁN THỰC TẾ)
 
-> **Môn học:** MMA301 – Multiplatform Mobile App Development  
-> **Dự án:** MMA301 E-Commerce Mobile Application  
-> **Quy trình chuẩn 5 bước:**  
-> (1) Mô tả triệu chứng quan sát được $\rightarrow$ (2) Khoanh vùng vị trí $\rightarrow$ (3) Kiểm tra input/state $\rightarrow$ (4) Kiểm tra điểm biến đổi/async $\rightarrow$ (5) Sửa nhỏ nhất & Chạy lại retest.
+- Môn học: MMA301 – Multiplatform Mobile App Development  
+- Dự án: MMA301 E-Commerce Mobile Application  
+- Quy trình chuẩn 5 bước:  
+  (1) Mô tả triệu chứng -> (2) Khoanh vùng vị trí -> (3) Kiểm tra input/state -> (4) Kiểm tra điểm biến đổi/async -> (5) Sửa nhỏ nhất & Chạy lại retest.
 
 ---
 
-## 🐛 DEBUG LOG 01: LỖI MISMATCH PHIÊN BẢN DEPENDENCY TRÊN EXPO SDK 57
+## DEBUG LOG 01: LỖI MISMATCH PHIÊN BẢN DEPENDENCY TRÊN EXPO SDK 57
 
 ### 1. Triệu chứng quan sát được (Symptom)
 - Khi chạy công cụ kiểm định `npx expo-doctor`, hệ thống báo lỗi đỏ dừng kiểm tra:
   ```
-  ✖ Check that packages match versions required by installed Expo SDK
+  [FAILED] Check that packages match versions required by installed Expo SDK
   Major version mismatches:
     @react-native-async-storage/async-storage 3.1.1 (expected: 2.2.0)
     expo-device 58.0.5 (expected: ~57.0.2)
@@ -42,11 +42,11 @@
   Running 21 checks on your project...
   21/21 checks passed. No issues detected!
   ```
-  $\rightarrow$ **Kết quả:** Đã giải quyết triệt để 100%, không còn bất kỳ cảnh báo xung đột nào.
+  -> **Kết quả:** Đã giải quyết triệt để 100%, không còn bất kỳ cảnh báo xung đột nào.
 
 ---
 
-## 🐛 DEBUG LOG 02: LỖI THIẾU THƯ MỤC CHUYỂN ĐỔI CÚ PHÁP CỦA HERMES-PARSER KHI EXPORT BUNDLE
+## DEBUG LOG 02: LỖI THIẾU THƯ MỤC CHUYỂN ĐỔI CÚ PHÁP CỦA HERMES-PARSER KHI EXPORT BUNDLE
 
 ### 1. Triệu chứng quan sát được (Symptom)
 - Khi chạy lệnh đóng gói kiểm tra ứng dụng: `npx expo export -p android`, tiến trình Metro Bundler bị dừng đột ngột với lỗi SyntaxError:
@@ -81,4 +81,4 @@
   ```bash
   npx expo export -p android --no-minify
   ```
-  $\rightarrow$ **Kết quả:** Metro Bundler biên dịch thành công **993 modules (100%)**, xuất ra file bytecode `index.hbc` (2.5MB) hoàn chỉnh mà không gặp bất kỳ lỗi nào.
+  -> **Kết quả:** Metro Bundler biên dịch thành công **993 modules (100%)**, xuất ra file bytecode `index.hbc` (2.5MB) hoàn chỉnh mà không gặp bất kỳ lỗi nào.

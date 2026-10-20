@@ -1,6 +1,5 @@
 import React from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
 import { useWishlist } from '../context/WishlistContext';
 
 export const ProductCard = ({ product, onPress, onAddToCart }) => {
@@ -14,24 +13,20 @@ export const ProductCard = ({ product, onPress, onAddToCart }) => {
           <Image source={{ uri: product.thumbnail }} style={styles.image} resizeMode="contain" />
         ) : (
           <View style={[styles.image, styles.noImage]}>
-            <Ionicons name="image-outline" size={32} color="#94A3B8" />
+            <Text style={styles.noImageText}>Không có ảnh</Text>
           </View>
         )}
-        
-        {/* Nút Yêu thích (Wishlist) */}
+
         <TouchableOpacity
-          style={styles.favoriteButton}
+          style={[styles.favoriteButton, wishlisted && styles.favoriteButtonActive]}
           onPress={() => toggleWishlist(product)}
           hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
         >
-          <Ionicons
-            name={wishlisted ? 'heart' : 'heart-outline'}
-            size={20}
-            color={wishlisted ? '#EF4444' : '#64748B'}
-          />
+          <Text style={[styles.favoriteText, wishlisted && styles.favoriteTextActive]}>
+            {wishlisted ? 'Đã lưu' : 'Lưu'}
+          </Text>
         </TouchableOpacity>
 
-        {/* Nhãn danh mục */}
         {product.category && (
           <View style={styles.categoryBadge}>
             <Text style={styles.categoryText}>{product.category}</Text>
@@ -45,7 +40,7 @@ export const ProductCard = ({ product, onPress, onAddToCart }) => {
         </Text>
 
         <View style={styles.ratingRow}>
-          <Ionicons name="star" size={14} color="#F59E0B" />
+          <Text style={styles.starText}>★</Text>
           <Text style={styles.ratingText}>{product.rating ? product.rating.toFixed(1) : '4.5'}</Text>
           {product.brand && <Text style={styles.brandText}>• {product.brand}</Text>}
         </View>
@@ -58,7 +53,6 @@ export const ProductCard = ({ product, onPress, onAddToCart }) => {
               onPress={() => onAddToCart(product)}
               activeOpacity={0.8}
             >
-              <Ionicons name="cart-outline" size={16} color="#FFFFFF" />
               <Text style={styles.addButtonText}>Thêm</Text>
             </TouchableOpacity>
           )}
@@ -77,8 +71,8 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     borderWidth: 1,
     borderColor: '#E2E8F0',
-    elevation: 2, // Android shadow
-    shadowColor: '#000', // iOS shadow
+    elevation: 2,
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.05,
     shadowRadius: 4,
@@ -98,16 +92,32 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  noImageText: {
+    color: '#94A3B8',
+    fontSize: 12,
+  },
   favoriteButton: {
     position: 'absolute',
     top: 8,
     right: 8,
     backgroundColor: 'rgba(255, 255, 255, 0.9)',
-    borderRadius: 20,
-    width: 32,
-    height: 32,
-    justifyContent: 'center',
-    alignItems: 'center',
+    borderRadius: 6,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderWidth: 1,
+    borderColor: '#CBD5E1',
+  },
+  favoriteButtonActive: {
+    backgroundColor: '#FEE2E2',
+    borderColor: '#FCA5A5',
+  },
+  favoriteText: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: '#64748B',
+  },
+  favoriteTextActive: {
+    color: '#DC2626',
   },
   categoryBadge: {
     position: 'absolute',
@@ -140,11 +150,15 @@ const styles = StyleSheet.create({
     marginTop: 4,
     marginBottom: 6,
   },
+  starText: {
+    fontSize: 13,
+    color: '#F59E0B',
+  },
   ratingText: {
     fontSize: 12,
     fontWeight: '700',
     color: '#334155',
-    marginLeft: 4,
+    marginLeft: 3,
   },
   brandText: {
     fontSize: 11,
@@ -164,17 +178,14 @@ const styles = StyleSheet.create({
     color: '#2563EB',
   },
   addButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
     backgroundColor: '#2563EB',
     paddingVertical: 6,
-    paddingHorizontal: 10,
+    paddingHorizontal: 12,
     borderRadius: 6,
   },
   addButtonText: {
     color: '#FFFFFF',
     fontSize: 12,
     fontWeight: '600',
-    marginLeft: 4,
   },
 });

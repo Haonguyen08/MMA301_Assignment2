@@ -1,27 +1,3 @@
-/**
- * =========================================================================
- * PRODUCT DETAIL SCREEN - MÀN HÌNH CHI TIẾT SẢN PHẨM
- * =========================================================================
- * 1. Purpose (Trách nhiệm):
- *    - Hiển thị đầy đủ thông tin chi tiết một sản phẩm theo ID: hình ảnh, giá, mô tả, đánh giá, tồn kho.
- *    - Thao tác: Tăng/giảm số lượng đặt mua, Thêm vào giỏ hàng (Cart), Lưu yêu thích (Firebase Wishlist).
- *    - Điểm kết nối Trợ lý AI (Gemini AI Entry Point) để tư vấn sản phẩm đang xem.
- * 
- * 2. Input:
- *    - route.params.productId: ID của sản phẩm được truyền từ ProductListScreen.
- * 
- * 3. Trigger:
- *    - useEffect: Tải chi tiết sản phẩm qua productService.getProductById(productId).
- *    - User actions: Bấm nút tăng giảm số lượng, bấm "Thêm vào giỏ", bấm icon Yêu thích.
- * 
- * 4. Transform:
- *    - Validate ID: Nếu ID rỗng hoặc API trả về 404, hiển thị trạng thái lỗi rõ ràng (R04).
- * 
- * 5. Output / Failure:
- *    - Hiển thị giao diện chi tiết đẹp mắt, phản hồi thông báo (Toast/Alert) khi thêm giỏ thành công.
- * =========================================================================
- */
-
 import React, { useState, useEffect } from 'react';
 import {
   View,
@@ -33,7 +9,6 @@ import {
   SafeAreaView,
   Alert,
 } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
 import { productService } from '../api/productService';
 import { LoadingView } from '../components/LoadingView';
 import { ErrorRetry } from '../components/ErrorRetry';
@@ -50,7 +25,6 @@ export const ProductDetailScreen = ({ route, navigation }) => {
   const [errorMessage, setErrorMessage] = useState(null);
   const [quantity, setQuantity] = useState(1);
 
-  // 1. Tải thông tin sản phẩm
   const loadDetail = async () => {
     if (!productId) {
       setErrorMessage('Không tìm thấy mã sản phẩm hợp lệ.');
@@ -74,11 +48,9 @@ export const ProductDetailScreen = ({ route, navigation }) => {
     loadDetail();
   }, [productId]);
 
-  // Xử lý tăng giảm số lượng
   const handleIncrease = () => setQuantity((prev) => prev + 1);
   const handleDecrease = () => setQuantity((prev) => Math.max(1, prev - 1));
 
-  // Thêm vào giỏ hàng
   const handleAddToCart = () => {
     if (!product) return;
     addToCart(product, quantity);
@@ -101,7 +73,7 @@ export const ProductDetailScreen = ({ route, navigation }) => {
       <SafeAreaView style={styles.safeArea}>
         <View style={styles.headerBar}>
           <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
-            <Ionicons name="arrow-back" size={24} color="#0F172A" />
+            <Text style={styles.backText}>&lt; Quay lại</Text>
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Chi tiết sản phẩm</Text>
         </View>
@@ -114,25 +86,24 @@ export const ProductDetailScreen = ({ route, navigation }) => {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      {/* Header điều hướng */}
       <View style={styles.headerBar}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
-          <Ionicons name="arrow-back" size={24} color="#0F172A" />
+          <Text style={styles.backText}>&lt; Quay lại</Text>
         </TouchableOpacity>
         <Text style={styles.headerTitle} numberOfLines={1}>
           {product.title}
         </Text>
-        <TouchableOpacity onPress={() => toggleWishlist(product)} style={styles.iconBtn}>
-          <Ionicons
-            name={wishlisted ? 'heart' : 'heart-outline'}
-            size={24}
-            color={wishlisted ? '#EF4444' : '#0F172A'}
-          />
+        <TouchableOpacity
+          onPress={() => toggleWishlist(product)}
+          style={[styles.favBtn, wishlisted && styles.favBtnActive]}
+        >
+          <Text style={[styles.favBtnText, wishlisted && styles.favBtnTextActive]}>
+            {wishlisted ? 'Đã lưu' : 'Lưu'}
+          </Text>
         </TouchableOpacity>
       </View>
 
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-        {/* Ảnh sản phẩm */}
         <View style={styles.imageWrapper}>
           <Image
             source={{ uri: product.thumbnail || product.images?.[0] }}
@@ -146,7 +117,6 @@ export const ProductDetailScreen = ({ route, navigation }) => {
           )}
         </View>
 
-        {/* Thông tin cơ bản */}
         <View style={styles.body}>
           <View style={styles.categoryRow}>
             <Text style={styles.categoryText}>{product.category}</Text>
@@ -158,7 +128,7 @@ export const ProductDetailScreen = ({ route, navigation }) => {
           <View style={styles.priceRatingRow}>
             <Text style={styles.price}>${Number(product.price).toFixed(2)}</Text>
             <View style={styles.ratingBox}>
-              <Ionicons name="star" size={16} color="#F59E0B" />
+              <Text style={styles.starText}>★</Text>
               <Text style={styles.ratingScore}>{product.rating?.toFixed(1) || '5.0'}</Text>
               <Text style={styles.stockText}>
                 {product.stock > 0 ? `(Còn ${product.stock} sp)` : '(Hết hàng)'}
@@ -166,7 +136,6 @@ export const ProductDetailScreen = ({ route, navigation }) => {
             </View>
           </View>
 
-          {/* Nút Tư vấn AI gắn với ngữ cảnh sản phẩm này */}
           <TouchableOpacity
             style={styles.aiConsultBtn}
             onPress={() =>
@@ -177,27 +146,23 @@ export const ProductDetailScreen = ({ route, navigation }) => {
             }
             activeOpacity={0.8}
           >
-            <Ionicons name="sparkles" size={18} color="#7C3AED" />
             <Text style={styles.aiConsultText}>Hỏi Trợ lý AI về sản phẩm này</Text>
-            <Ionicons name="chevron-forward" size={16} color="#7C3AED" />
           </TouchableOpacity>
 
-          {/* Mô tả chi tiết */}
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Mô tả sản phẩm</Text>
             <Text style={styles.descriptionText}>{product.description}</Text>
           </View>
 
-          {/* Thông tin bảo hành & giao hàng */}
           <View style={styles.infoCard}>
             <View style={styles.infoItem}>
-              <Ionicons name="shield-checkmark-outline" size={20} color="#10B981" />
+              <Text style={styles.bulletText}>•</Text>
               <Text style={styles.infoItemText}>
                 {product.warrantyInformation || 'Bảo hành chính hãng 12 tháng'}
               </Text>
             </View>
             <View style={styles.infoItem}>
-              <Ionicons name="cube-outline" size={20} color="#3B82F6" />
+              <Text style={styles.bulletText}>•</Text>
               <Text style={styles.infoItemText}>
                 {product.shippingInformation || 'Giao hàng tận nơi 2-4 ngày'}
               </Text>
@@ -206,20 +171,18 @@ export const ProductDetailScreen = ({ route, navigation }) => {
         </View>
       </ScrollView>
 
-      {/* Thanh công cụ thêm vào giỏ hàng dưới đáy */}
       <View style={styles.bottomBar}>
         <View style={styles.quantityControl}>
           <TouchableOpacity onPress={handleDecrease} style={styles.qtyBtn}>
-            <Ionicons name="remove" size={18} color="#334155" />
+            <Text style={styles.qtySign}>-</Text>
           </TouchableOpacity>
           <Text style={styles.qtyValue}>{quantity}</Text>
           <TouchableOpacity onPress={handleIncrease} style={styles.qtyBtn}>
-            <Ionicons name="add" size={18} color="#334155" />
+            <Text style={styles.qtySign}>+</Text>
           </TouchableOpacity>
         </View>
 
         <TouchableOpacity style={styles.addToCartBtn} onPress={handleAddToCart} activeOpacity={0.85}>
-          <Ionicons name="cart" size={20} color="#FFFFFF" style={{ marginRight: 8 }} />
           <Text style={styles.addToCartText}>Thêm vào giỏ</Text>
         </TouchableOpacity>
       </View>
@@ -243,17 +206,42 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
   },
   backBtn: {
-    padding: 4,
+    paddingVertical: 4,
+    paddingHorizontal: 8,
+    backgroundColor: '#F1F5F9',
+    borderRadius: 6,
+  },
+  backText: {
+    fontSize: 13,
+    color: '#0F172A',
+    fontWeight: '600',
   },
   headerTitle: {
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: '700',
     color: '#0F172A',
     flex: 1,
-    marginHorizontal: 12,
+    marginHorizontal: 10,
   },
-  iconBtn: {
-    padding: 4,
+  favBtn: {
+    paddingVertical: 4,
+    paddingHorizontal: 10,
+    backgroundColor: '#F1F5F9',
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: '#CBD5E1',
+  },
+  favBtnActive: {
+    backgroundColor: '#FEE2E2',
+    borderColor: '#FCA5A5',
+  },
+  favBtnText: {
+    fontSize: 12,
+    color: '#64748B',
+    fontWeight: '600',
+  },
+  favBtnTextActive: {
+    color: '#DC2626',
   },
   scrollContent: {
     paddingBottom: 30,
@@ -324,11 +312,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
+  starText: {
+    fontSize: 14,
+    color: '#F59E0B',
+  },
   ratingScore: {
     fontSize: 14,
     fontWeight: '700',
     color: '#0F172A',
-    marginLeft: 4,
+    marginLeft: 3,
   },
   stockText: {
     fontSize: 12,
@@ -336,7 +328,6 @@ const styles = StyleSheet.create({
     marginLeft: 6,
   },
   aiConsultBtn: {
-    flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#F5F3FF',
     borderWidth: 1,
@@ -347,10 +338,8 @@ const styles = StyleSheet.create({
   },
   aiConsultText: {
     color: '#7C3AED',
-    fontWeight: '600',
+    fontWeight: '700',
     fontSize: 13,
-    flex: 1,
-    marginLeft: 8,
   },
   section: {
     marginBottom: 20,
@@ -378,10 +367,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 6,
   },
+  bulletText: {
+    fontSize: 16,
+    color: '#2563EB',
+    marginRight: 6,
+  },
   infoItemText: {
     fontSize: 13,
     color: '#334155',
-    marginLeft: 10,
   },
   bottomBar: {
     flexDirection: 'row',
@@ -401,8 +394,13 @@ const styles = StyleSheet.create({
     marginRight: 12,
   },
   qtyBtn: {
-    paddingHorizontal: 12,
-    paddingVertical: 10,
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+  },
+  qtySign: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#334155',
   },
   qtyValue: {
     fontSize: 15,
@@ -412,7 +410,6 @@ const styles = StyleSheet.create({
   },
   addToCartBtn: {
     flex: 1,
-    flexDirection: 'row',
     backgroundColor: '#2563EB',
     height: 48,
     borderRadius: 10,

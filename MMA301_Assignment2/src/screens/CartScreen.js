@@ -1,31 +1,3 @@
-/**
- * =========================================================================
- * CART SCREEN - MÀN HÌNH GIỎ HÀNG VÀ THANH TOÁN (CHECKOUT)
- * =========================================================================
- * 1. Purpose (Trách nhiệm):
- *    - Quản lý danh sách các mặt hàng người dùng đã chọn mua.
- *    - Tăng/giảm số lượng, xóa từng món, xóa sạch toàn bộ giỏ hàng.
- *    - Hiển thị bảng tính tiền dẫn xuất (Derived Totals): Tạm tính, Phí ship, Tổng thanh toán.
- *    - Thực hiện Đặt hàng (Checkout): Lưu đơn hàng lên Firebase và bắn Notification thành công.
- * 
- * 2. Input:
- *    - cartItems, totalCount, subtotal, shippingFee, totalAmount từ CartContext.
- * 
- * 3. Trigger:
- *    - Người dùng bấm nút tăng giảm số lượng (+ / -) hoặc nút xóa (Thùng rác).
- *    - Người dùng bấm nút "Đặt hàng ngay".
- * 
- * 4. Transform:
- *    - CartContext tự động tính toán lại Derived Totals khi số lượng thay đổi.
- *    - placeOrder(): Tạo object đơn hàng mới, gửi sang Firebase, gửi thông báo thiết bị,
- *      sau đó gọi clearCart() để làm rỗng giỏ hàng.
- * 
- * 5. Output / Failure:
- *    - Cập nhật giao diện giỏ hàng tức thì; lưu trữ bền vững vào AsyncStorage;
- *      hiển thị Alert xác nhận đặt hàng thành công.
- * =========================================================================
- */
-
 import React, { useState } from 'react';
 import {
   View,
@@ -37,7 +9,6 @@ import {
   Alert,
   ActivityIndicator,
 } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
 import { CartItem } from '../components/CartItem';
@@ -58,7 +29,6 @@ export const CartScreen = ({ navigation }) => {
   const { placeOrder } = useWishlist();
   const [isPlacingOrder, setIsPlacingOrder] = useState(false);
 
-  // Xử lý xác nhận xóa sạch giỏ
   const handleConfirmClear = () => {
     Alert.alert('Xác nhận', 'Bạn có chắc chắn muốn xóa toàn bộ sản phẩm trong giỏ hàng?', [
       { text: 'Hủy', style: 'cancel' },
@@ -66,7 +36,6 @@ export const CartScreen = ({ navigation }) => {
     ]);
   };
 
-  // Xử lý Đặt hàng (Checkout Flow)
   const handleCheckout = async () => {
     if (cartItems.length === 0) return;
 
@@ -88,7 +57,7 @@ export const CartScreen = ({ navigation }) => {
                 alertMsg += `\n(Ghi chú: ${res.cloudWarning})`;
               }
 
-              Alert.alert('🎉 Đặt hàng thành công!', alertMsg, [
+              Alert.alert('Đặt hàng thành công!', alertMsg, [
                 {
                   text: 'Xem đơn hàng',
                   onPress: () => navigation.navigate('WishlistTab', { activeTab: 'orders' }),
@@ -108,7 +77,6 @@ export const CartScreen = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      {/* Header giỏ hàng */}
       <View style={styles.header}>
         <View style={styles.headerLeft}>
           <Text style={styles.headerTitle}>Giỏ hàng của bạn</Text>
@@ -122,10 +90,8 @@ export const CartScreen = ({ navigation }) => {
         )}
       </View>
 
-      {/* Danh sách món hàng hoặc Empty State */}
       {cartItems.length === 0 ? (
         <EmptyState
-          icon="cart-outline"
           title="Giỏ hàng trống"
           message="Bạn chưa thêm sản phẩm nào vào giỏ. Hãy dạo quanh cửa hàng để chọn món đồ yêu thích nhé!"
           buttonText="Mua sắm ngay"
@@ -146,7 +112,6 @@ export const CartScreen = ({ navigation }) => {
             )}
           />
 
-          {/* Bảng tóm tắt tiền (Derived Totals Summary) */}
           <View style={styles.summaryCard}>
             <View style={styles.summaryRow}>
               <Text style={styles.summaryLabel}>Tạm tính ({totalCount} sản phẩm):</Text>
@@ -182,10 +147,7 @@ export const CartScreen = ({ navigation }) => {
               {isPlacingOrder ? (
                 <ActivityIndicator size="small" color="#FFFFFF" />
               ) : (
-                <>
-                  <Text style={styles.checkoutText}>Tiến hành Đặt hàng</Text>
-                  <Ionicons name="arrow-forward" size={18} color="#FFFFFF" style={{ marginLeft: 6 }} />
-                </>
+                <Text style={styles.checkoutText}>Tiến hành Đặt hàng</Text>
               )}
             </TouchableOpacity>
           </View>
@@ -298,7 +260,6 @@ const styles = StyleSheet.create({
     color: '#2563EB',
   },
   checkoutBtn: {
-    flexDirection: 'row',
     backgroundColor: '#2563EB',
     height: 48,
     borderRadius: 10,

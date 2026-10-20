@@ -1,13 +1,13 @@
 # MMA301 – ASSIGNMENT 02: INTEGRATED E-COMMERCE MOBILE APPLICATION
 
-> **Môn học:** MMA301 – Multiplatform Mobile App Development  
-> **Nền tảng:** React Native (Expo SDK 57) + JavaScript  
-> **Sinh viên:** Haonguyen08  
-> **Lớp:** MMA301  
+- Môn học: MMA301 – Multiplatform Mobile App Development  
+- Nền tảng: React Native (Expo SDK 57) + JavaScript  
+- Sinh viên: Haonguyen08  
+- Lớp: MMA301  
 
 ---
 
-## 📌 HỒ SƠ ĐÁNH GIÁ & DANH MỤC TÀI LIỆU (DOCUMENTATION INDEX)
+## HỒ SƠ ĐÁNH GIÁ & DANH MỤC TÀI LIỆU (DOCUMENTATION INDEX)
 
 Tài liệu đồ án đã được chuẩn hóa và tách riêng thành từng tệp chuyên biệt theo đúng quy định mục 0.1 trong Student Guide:
 
@@ -29,7 +29,7 @@ Tài liệu đồ án đã được chuẩn hóa và tách riêng thành từng 
 1. **Khởi động (Startup):** Khôi phục trạng thái giỏ hàng từ `AsyncStorage`, đồng bộ danh sách yêu thích và lịch sử đơn hàng từ `Firebase`, tải danh mục sản phẩm từ Remote API (`DummyJSON`).
 2. **Duyệt & Tìm kiếm (Browse/Search):** `FlatList` phân trang vô tận (`limit=10`, `skip`), hỗ trợ kéo làm mới (`Pull-to-refresh`), tìm kiếm theo từ khóa tức thì và lọc theo danh mục (beauty, fragrances, furniture, groceries,...).
 3. **Chi tiết & Giỏ hàng (Detail & Cart):** Xem hình ảnh, mô tả, đánh giá sao, tồn kho, điều chỉnh số lượng đặt mua, thêm vào giỏ hàng.
-4. **Tính toán dẫn xuất (Derived Totals):** Tự động tính tổng số lượng món, tạm tính, phí vận chuyển (miễn phí cho đơn $\ge$ $50$) và tổng tiền thanh toán thông qua `useMemo` (Single Source of Truth).
+4. **Tính toán dẫn xuất (Derived Totals):** Tự động tính tổng số lượng món, tạm tính, phí vận chuyển (miễn phí cho đơn >= $50) và tổng tiền thanh toán thông qua `useMemo` (Single Source of Truth).
 5. **Đám mây Firebase:** Lưu trữ và đồng bộ hóa Danh sách Yêu thích (Wishlist) và Lịch sử Đơn hàng (Order History) qua Firebase Cloud Database.
 6. **Trợ lý Google Gemini AI:** Tiếp nhận nhu cầu mua sắm và ngân sách của người dùng, đưa ngữ cảnh kho hàng (Context) vào Prompt, tạo gợi ý và **xác thực nghiêm ngặt mã sản phẩm (ID Validation)** để chống ảo giác (AI Hallucination).
 7. **Thông báo hệ thống (Notification Flow):** Quản lý trạng thái cấp quyền (Granted/Denied); tự động kích hoạt thông báo đẩy cục bộ khi đặt hàng thành công (`Order Placed`) hoặc khuyến mãi (`Flash Sale`).
@@ -117,49 +117,49 @@ export const CONFIG = {
 
 Theo quy chuẩn của đồ án, sinh viên nên commit theo từng chức năng nhỏ (Milestone):
 
-### 🔹 Milestone 1: Điều hướng & Khung sườn giao diện (M1)
+### Milestone 1: Điều hướng & Khung sườn giao diện (M1)
 ```bash
 git add MMA301_Assignment2/src/navigation/ MMA301_Assignment2/App.js
 git commit -m "feat(M1): setup navigation container, bottom tabs and stack structure"
 ```
 
-### 🔹 Milestone 2: Dữ liệu Remote API & Danh mục sản phẩm (M2)
+### Milestone 2: Dữ liệu Remote API & Danh mục sản phẩm (M2)
 ```bash
 git add MMA301_Assignment2/src/config/ MMA301_Assignment2/src/api/productService.js MMA301_Assignment2/src/components/ProductCard.js MMA301_Assignment2/src/screens/ProductListScreen.js
 git commit -m "feat(M2): implement remote product catalog with pagination, search and categories"
 ```
 
-### 🔹 Milestone 3: Chi tiết sản phẩm & Quản lý giỏ hàng (M3)
+### Milestone 3: Chi tiết sản phẩm & Quản lý giỏ hàng (M3)
 ```bash
 git add MMA301_Assignment2/src/screens/ProductDetailScreen.js MMA301_Assignment2/src/context/CartContext.js MMA301_Assignment2/src/components/CartItem.js MMA301_Assignment2/src/screens/CartScreen.js
 git commit -m "feat(M3): add product detail view and cart state management with derived totals"
 ```
 
-### 🔹 Milestone 4: Lưu trữ bền vững AsyncStorage & Trạng thái UI (M4)
+### Milestone 4: Lưu trữ bền vững AsyncStorage & Trạng thái UI (M4)
 ```bash
 git add MMA301_Assignment2/src/components/LoadingView.js MMA301_Assignment2/src/components/EmptyState.js MMA301_Assignment2/src/components/ErrorRetry.js
 git commit -m "feat(M4): integrate AsyncStorage persistence and state handling (loading/empty/error)"
 ```
 
-### 🔹 Milestone 5: Nghiệp vụ Đám mây Firebase (M5)
+### Milestone 5: Nghiệp vụ Đám mây Firebase (M5)
 ```bash
 git add MMA301_Assignment2/src/api/firebaseService.js MMA301_Assignment2/src/context/WishlistContext.js MMA301_Assignment2/src/screens/WishlistScreen.js
 git commit -m "feat(M5): integrate Firebase cloud sync for wishlist and order history records"
 ```
 
-### 🔹 Milestone 6: Quy trình Thông báo hệ thống (M6)
+### Milestone 6: Quy trình Thông báo hệ thống (M6)
 ```bash
 git add MMA301_Assignment2/src/api/notificationService.js MMA301_Assignment2/src/screens/SettingsScreen.js MMA301_Assignment2/app.json
 git commit -m "feat(M6): implement notification permissions and order business event flow"
 ```
 
-### 🔹 Milestone 7: Trợ lý Mua sắm Gemini AI (M7)
+### Milestone 7: Trợ lý Mua sắm Gemini AI (M7)
 ```bash
 git add MMA301_Assignment2/src/api/geminiService.js MMA301_Assignment2/src/screens/GeminiAIScreen.js
 git commit -m "feat(M7): integrate Gemini AI assistant with catalog context and hallucination validation"
 ```
 
-### 🔹 Milestone 8 & 9: Kiểm thử, Debug Hardening & Tài liệu hoàn thiện (M8-M9)
+### Milestone 8 & 9: Kiểm thử, Debug Hardening & Tài liệu hoàn thiện (M8-M9)
 ```bash
 git add .gitignore README.md docs/ MMA301_Assignment2/package.json MMA301_Assignment2/package-lock.json
 git commit -m "docs(M8-M9): separate documentation, complete test matrix, debug logs and release verification"

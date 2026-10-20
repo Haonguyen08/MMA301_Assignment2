@@ -1,29 +1,3 @@
-/**
- * =========================================================================
- * WISHLIST & ORDERS SCREEN - MÀN HÌNH YÊU THÍCH & ĐƠN HÀNG (FIREBASE BACKEND)
- * =========================================================================
- * 1. Purpose (Trách nhiệm):
- *    - Quản lý trạng thái nghiệp vụ lưu trữ trên Firebase:
- *      + Tab 1: Danh sách sản phẩm yêu thích (Wishlist).
- *      + Tab 2: Lịch sử các đơn hàng đã đặt thành công (Order History).
- * 
- * 2. Input:
- *    - wishlist, orders, loading, firebaseError từ WishlistContext.
- * 
- * 3. Trigger:
- *    - Chuyển tab giữa "Yêu thích" và "Đơn hàng".
- *    - Kéo xuống để đồng bộ dữ liệu mới nhất từ Firebase (onRefresh).
- *    - Bấm "Thêm vào giỏ" từ món yêu thích.
- * 
- * 4. Transform:
- *    - Lọc và hiển thị tương ứng theo tab đang chọn; định dạng ngày giờ đơn hàng.
- * 
- * 5. Output / Failure:
- *    - Hiển thị danh sách đẹp mắt; hiển thị banner cảnh báo nếu Firebase mất kết nối
- *      hoặc lỗi quyền (không làm sập ứng dụng).
- * =========================================================================
- */
-
 import React, { useState } from 'react';
 import {
   View,
@@ -36,7 +10,6 @@ import {
   RefreshControl,
   ScrollView,
 } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
 import { useWishlist } from '../context/WishlistContext';
 import { useCart } from '../context/CartContext';
 import { EmptyState } from '../components/EmptyState';
@@ -48,14 +21,13 @@ export const WishlistScreen = ({ route, navigation }) => {
   const { wishlist, orders, loading, firebaseError, toggleWishlist, refreshData } = useWishlist();
   const { addToCart } = useCart();
 
-  // Render từng sản phẩm yêu thích
   const renderWishlistItem = ({ item }) => (
     <View style={styles.wishlistCard}>
       {item.thumbnail ? (
         <Image source={{ uri: item.thumbnail }} style={styles.itemImage} resizeMode="cover" />
       ) : (
         <View style={[styles.itemImage, styles.noImage]}>
-          <Ionicons name="image-outline" size={24} color="#94A3B8" />
+          <Text style={styles.noImageText}>Ảnh</Text>
         </View>
       )}
 
@@ -73,7 +45,6 @@ export const WishlistScreen = ({ route, navigation }) => {
           onPress={() => addToCart(item, 1)}
           activeOpacity={0.8}
         >
-          <Ionicons name="cart-outline" size={16} color="#FFFFFF" />
           <Text style={styles.addCartText}>Thêm</Text>
         </TouchableOpacity>
 
@@ -82,13 +53,12 @@ export const WishlistScreen = ({ route, navigation }) => {
           onPress={() => toggleWishlist(item)}
           hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
         >
-          <Ionicons name="trash-outline" size={18} color="#EF4444" />
+          <Text style={styles.removeText}>Xóa</Text>
         </TouchableOpacity>
       </View>
     </View>
   );
 
-  // Render từng đơn hàng đã đặt
   const renderOrderItem = ({ item }) => (
     <View style={styles.orderCard}>
       <View style={styles.orderHeader}>
@@ -109,7 +79,6 @@ export const WishlistScreen = ({ route, navigation }) => {
         </View>
       </View>
 
-      {/* Danh sách ảnh các món trong đơn */}
       <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.orderThumbnails}>
         {item.items?.map((subItem, index) => (
           <View key={index} style={styles.orderThumbWrapper}>
@@ -137,19 +106,12 @@ export const WishlistScreen = ({ route, navigation }) => {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      {/* Header Tabs: Yêu thích vs Đơn hàng */}
       <View style={styles.tabContainer}>
         <TouchableOpacity
           style={[styles.tabButton, activeTab === 'wishlist' && styles.tabButtonActive]}
           onPress={() => setActiveTab('wishlist')}
           activeOpacity={0.8}
         >
-          <Ionicons
-            name="heart"
-            size={18}
-            color={activeTab === 'wishlist' ? '#2563EB' : '#64748B'}
-            style={{ marginRight: 6 }}
-          />
           <Text style={[styles.tabText, activeTab === 'wishlist' && styles.tabTextActive]}>
             Yêu thích ({wishlist.length})
           </Text>
@@ -160,22 +122,14 @@ export const WishlistScreen = ({ route, navigation }) => {
           onPress={() => setActiveTab('orders')}
           activeOpacity={0.8}
         >
-          <Ionicons
-            name="receipt"
-            size={18}
-            color={activeTab === 'orders' ? '#2563EB' : '#64748B'}
-            style={{ marginRight: 6 }}
-          />
           <Text style={[styles.tabText, activeTab === 'orders' && styles.tabTextActive]}>
             Đơn hàng ({orders.length})
           </Text>
         </TouchableOpacity>
       </View>
 
-      {/* Banner thông báo trạng thái Firebase (R08 & Error Handling) */}
       {firebaseError && (
         <View style={styles.errorBanner}>
-          <Ionicons name="cloud-offline-outline" size={18} color="#991B1B" />
           <Text style={styles.errorBannerText} numberOfLines={2}>
             {firebaseError}
           </Text>
@@ -185,7 +139,6 @@ export const WishlistScreen = ({ route, navigation }) => {
         </View>
       )}
 
-      {/* Nội dung danh sách */}
       {activeTab === 'wishlist' ? (
         <FlatList
           data={wishlist}
@@ -197,9 +150,8 @@ export const WishlistScreen = ({ route, navigation }) => {
           }
           ListEmptyComponent={
             <EmptyState
-              icon="heart-outline"
               title="Chưa có sản phẩm yêu thích"
-              message="Hãy bấm vào biểu tượng trái tim ở các sản phẩm để lưu lại vào đây và đồng bộ lên Firebase nhé!"
+              message="Hãy bấm nút Lưu ở các sản phẩm để lưu lại vào đây và đồng bộ lên Firebase."
               buttonText="Khám phá ngay"
               onPressButton={() => navigation.navigate('CatalogTab')}
             />
@@ -216,7 +168,6 @@ export const WishlistScreen = ({ route, navigation }) => {
           }
           ListEmptyComponent={
             <EmptyState
-              icon="receipt-outline"
               title="Chưa có lịch sử đơn hàng"
               message="Các đơn hàng sau khi bạn nhấn Đặt hàng trong giỏ sẽ được lưu trữ và hiển thị chi tiết tại đây."
               buttonText="Xem giỏ hàng"
@@ -243,7 +194,6 @@ const styles = StyleSheet.create({
   },
   tabButton: {
     flex: 1,
-    flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
     paddingVertical: 10,
@@ -274,7 +224,6 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 12,
     color: '#991B1B',
-    marginLeft: 8,
   },
   retrySmallBtn: {
     backgroundColor: '#DC2626',
@@ -312,6 +261,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  noImageText: {
+    color: '#94A3B8',
+    fontSize: 11,
+  },
   itemInfo: {
     flex: 1,
     marginLeft: 12,
@@ -338,11 +291,9 @@ const styles = StyleSheet.create({
     marginLeft: 8,
   },
   addCartBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
     backgroundColor: '#2563EB',
     paddingVertical: 6,
-    paddingHorizontal: 10,
+    paddingHorizontal: 12,
     borderRadius: 6,
     marginBottom: 8,
   },
@@ -350,10 +301,17 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 12,
     fontWeight: '600',
-    marginLeft: 4,
   },
   removeBtn: {
-    padding: 4,
+    paddingVertical: 2,
+    paddingHorizontal: 6,
+    backgroundColor: '#FEE2E2',
+    borderRadius: 4,
+  },
+  removeText: {
+    color: '#DC2626',
+    fontSize: 11,
+    fontWeight: '600',
   },
   orderCard: {
     backgroundColor: '#FFFFFF',

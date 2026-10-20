@@ -1,29 +1,3 @@
-/**
- * =========================================================================
- * SETTINGS SCREEN - MÀN HÌNH CÀI ĐẶT, THÔNG BÁO & KIỂM THỬ ĐÁNH GIÁ
- * =========================================================================
- * 1. Purpose (Trách nhiệm):
- *    - Quản lý và kiểm tra quyền thông báo (Notification Permission Status).
- *    - Cung cấp các nút kiểm thử nghiệp vụ thông báo (Flash Sale Push).
- *    - Cung cấp công cụ Giả lập lỗi Firebase (Error Simulation Switch) phục vụ
- *      Test Case #10 và Test Case #11 cho buổi chấm vấn đáp trực tiếp.
- *    - Hiển thị thông tin sinh viên và phiên bản đồ án.
- * 
- * 2. Input:
- *    - Trạng thái quyền từ notificationService.
- *    - Trạng thái giả lập lỗi từ firebaseService.
- * 
- * 3. Trigger:
- *    - Bấm nút "Xin quyền thông báo", "Gửi thông báo thử nghiệm", "Bật/tắt mô phỏng lỗi".
- * 
- * 4. Transform:
- *    - Cập nhật cờ trong firebaseService và gọi notificationService.
- * 
- * 5. Output / Failure:
- *    - Hiển thị trạng thái cấp quyền (Granted / Denied) trực quan, có giải thích rõ ràng.
- * =========================================================================
- */
-
 import React, { useState, useEffect } from 'react';
 import {
   View,
@@ -35,7 +9,6 @@ import {
   SafeAreaView,
   Alert,
 } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
 import { notificationService } from '../api/notificationService';
 import { firebaseService } from '../api/firebaseService';
 import { CONFIG } from '../config/config';
@@ -47,7 +20,6 @@ export const SettingsScreen = () => {
     firebaseService.isSimulatingError()
   );
 
-  // Kiểm tra trạng thái quyền thông báo khi mở màn hình
   const checkPermission = async () => {
     const status = await notificationService.checkPermissionStatus();
     setPermissionStatus(status);
@@ -57,7 +29,6 @@ export const SettingsScreen = () => {
     checkPermission();
   }, []);
 
-  // Xin quyền thông báo
   const handleRequestPermission = async () => {
     const res = await notificationService.requestPermission();
     setPermissionStatus(res.status);
@@ -71,7 +42,6 @@ export const SettingsScreen = () => {
     }
   };
 
-  // Bắn thông báo thử nghiệm
   const handleTestNotification = async () => {
     const sent = await notificationService.notifyFlashSale();
     if (!sent) {
@@ -82,19 +52,17 @@ export const SettingsScreen = () => {
     }
   };
 
-  // Bật/tắt chế độ mô phỏng lỗi Firebase (Dành cho buổi chấm Test Case #10)
   const handleToggleFirebaseError = (value) => {
     setSimulateFirebaseError(value);
     firebaseService.setSimulateError(value);
     Alert.alert(
       'Chế độ kiểm thử Firebase',
       value
-        ? 'ĐÃ BẬT: Các thao tác lưu Wishlist và Đơn hàng sẽ cố tình báo lỗi mạng/quyền để kiểm tra khả năng phục hồi (Error Handling).'
+        ? 'ĐÃ BẬT: Các thao tác lưu Wishlist và Đơn hàng sẽ cố tình báo lỗi mạng/quyền để kiểm tra khả năng phục hồi.'
         : 'ĐÃ TẮT: Hệ thống hoạt động bình thường.'
     );
   };
 
-  // Xóa bộ nhớ đệm cục bộ
   const handleClearCache = async () => {
     Alert.alert('Xác nhận', 'Bạn có muốn đặt lại toàn bộ dữ liệu cục bộ?', [
       { text: 'Hủy' },
@@ -112,23 +80,19 @@ export const SettingsScreen = () => {
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        {/* Phần 1: Quản lý Thông báo (R09) */}
         <View style={styles.section}>
-          <Text style={styles.sectionHeader}>Thông báo hệ thống (R09)</Text>
+          <Text style={styles.sectionHeader}>Thông báo hệ thống</Text>
           <View style={styles.card}>
             <View style={styles.row}>
-              <View style={styles.rowLeft}>
-                <Ionicons name="notifications-outline" size={22} color="#2563EB" />
-                <View style={{ marginLeft: 12 }}>
-                  <Text style={styles.rowTitle}>Trạng thái quyền thông báo</Text>
-                  <Text style={styles.rowSubtitle}>
-                    {permissionStatus === 'granted'
-                      ? '✓ Đã cấp quyền (Allowed)'
-                      : permissionStatus === 'denied'
-                      ? '✗ Đã bị từ chối (Denied)'
-                      : 'Chưa xác định (Undetermined)'}
-                  </Text>
-                </View>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.rowTitle}>Trạng thái quyền thông báo</Text>
+                <Text style={styles.rowSubtitle}>
+                  {permissionStatus === 'granted'
+                    ? 'Đã cấp quyền (Allowed)'
+                    : permissionStatus === 'denied'
+                    ? 'Đã bị từ chối (Denied)'
+                    : 'Chưa xác định (Undetermined)'}
+                </Text>
               </View>
 
               <TouchableOpacity
@@ -151,26 +115,20 @@ export const SettingsScreen = () => {
               onPress={handleTestNotification}
               activeOpacity={0.7}
             >
-              <Ionicons name="megaphone-outline" size={20} color="#059669" />
               <Text style={styles.actionRowText}>Bắn thông báo thử nghiệm (Flash Sale)</Text>
-              <Ionicons name="chevron-forward" size={16} color="#94A3B8" />
             </TouchableOpacity>
           </View>
         </View>
 
-        {/* Phần 2: Kiểm thử lỗi Đám mây & AI (Testing & Debug Verification) */}
         <View style={styles.section}>
-          <Text style={styles.sectionHeader}>Công cụ Kiểm thử & Đánh giá (Test Matrix)</Text>
+          <Text style={styles.sectionHeader}>Công cụ Kiểm thử & Đánh giá</Text>
           <View style={styles.card}>
             <View style={styles.row}>
-              <View style={[styles.rowLeft, { flex: 1 }]}>
-                <Ionicons name="bug-outline" size={22} color="#DC2626" />
-                <View style={{ marginLeft: 12, flex: 1 }}>
-                  <Text style={styles.rowTitle}>Mô phỏng lỗi Firebase (Test #10)</Text>
-                  <Text style={styles.rowSubtitle}>
-                    Cố tình kích hoạt Exception khi ghi/đọc để kiểm chứng app không bị crash.
-                  </Text>
-                </View>
+              <View style={{ flex: 1, marginRight: 8 }}>
+                <Text style={styles.rowTitle}>Mô phỏng lỗi Firebase (Test #10)</Text>
+                <Text style={styles.rowSubtitle}>
+                  Cố tình kích hoạt Exception khi ghi/đọc để kiểm chứng app không bị crash.
+                </Text>
               </View>
 
               <Switch
@@ -188,14 +146,11 @@ export const SettingsScreen = () => {
               onPress={handleClearCache}
               activeOpacity={0.7}
             >
-              <Ionicons name="refresh-circle-outline" size={20} color="#D97706" />
               <Text style={styles.actionRowText}>Xóa toàn bộ Cache & AsyncStorage (Test #8)</Text>
-              <Ionicons name="chevron-forward" size={16} color="#94A3B8" />
             </TouchableOpacity>
           </View>
         </View>
 
-        {/* Phần 3: Thông tin Đồ án & Cấu hình */}
         <View style={styles.section}>
           <Text style={styles.sectionHeader}>Thông tin sinh viên & Môn học</Text>
           <View style={styles.card}>
@@ -262,10 +217,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-  rowLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
   rowTitle: {
     fontSize: 14,
     fontWeight: '600',
@@ -298,15 +249,11 @@ const styles = StyleSheet.create({
     marginVertical: 12,
   },
   actionRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 4,
+    paddingVertical: 6,
   },
   actionRowText: {
     fontSize: 14,
     color: '#1E293B',
-    marginLeft: 10,
-    flex: 1,
     fontWeight: '500',
   },
   infoRow: {

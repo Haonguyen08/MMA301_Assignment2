@@ -1,8 +1,8 @@
 # HƯỚNG DẪN TRẢ LỜI PHỎNG VẤN & BẢO VỆ MÃ NGUỒN (INTERVIEW GUIDE)
 
-> **Môn học:** MMA301 – Multiplatform Mobile App Development  
-> **Dự án:** MMA301 E-Commerce Mobile Application  
-> **Mục tiêu:** Giúp sinh viên nắm chắc luồng dữ liệu, tự tin "mở file và chỉ code" trong vòng $\le$ 30 giây, trả lời trôi chảy các câu hỏi tình huống của Giảng viên.
+- Môn học: MMA301 – Multiplatform Mobile App Development  
+- Dự án: MMA301 E-Commerce Mobile Application  
+- Mục tiêu: Giúp sinh viên nắm chắc luồng dữ liệu, tự tin "mở file và chỉ code" trong vòng <= 30 giây, trả lời trôi chảy các câu hỏi tình huống của Giảng viên.
 
 ---
 

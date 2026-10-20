@@ -1,31 +1,3 @@
-/**
- * =========================================================================
- * CART CONTEXT - QUẢN LÝ TRẠNG THÁI GIỎ HÀNG VÀ TÍNH TOÁN DỮ LIỆU
- * =========================================================================
- * 1. Purpose (Trách nhiệm):
- *    - Quản lý danh sách sản phẩm trong giỏ hàng (Cart State).
- *    - Cung cấp các thao tác: Thêm (Add), Sửa số lượng (Update), Xóa (Remove), Xóa sạch (Clear).
- *    - Lưu trữ bền vững (Persistence) với AsyncStorage để khi tắt app mở lại giỏ hàng vẫn còn.
- * 
- * 2. Input:
- *    - product (thông tin sản phẩm), quantity (số lượng mua).
- * 
- * 3. Trigger:
- *    - useEffect khi khởi động: Tải giỏ hàng đã lưu từ AsyncStorage.
- *    - User action: Bấm "Thêm vào giỏ", bấm nút "+" / "-", bấm "Xóa sản phẩm".
- * 
- * 4. Transform:
- *    - Thêm mới hoặc tăng số lượng nếu sản phẩm đã có trong giỏ hàng.
- *    - TÍNH TOÁN DẪN XUẤT (DERIVED TOTALS): Tổng số lượng, tạm tính, phí ship, tổng tiền.
- *      [CÂU HỎI VẤN ĐÁP: Vì sao tổng tiền là Derived State chứ không lưu vào state riêng?
- *       Trả lời: Giữ nguyên tắc Single Source of Truth (Nguồn chân lý duy nhất). Khi đó
- *       tổng tiền luôn chính xác 100% dựa trên danh sách món hàng, không bao giờ bị lệch dữ liệu.]
- * 
- * 5. Output / Failure:
- *    - Cung cấp cartItems, totalCount, subtotal, shippingFee, totalAmount cho toàn ứng dụng.
- * =========================================================================
- */
-
 import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -37,7 +9,6 @@ export const CartProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState([]);
   const [isLoaded, setIsLoaded] = useState(false);
 
-  // 1. Khôi phục giỏ hàng khi khởi động ứng dụng (Persistence Restore)
   useEffect(() => {
     const restoreCart = async () => {
       try {
@@ -58,9 +29,8 @@ export const CartProvider = ({ children }) => {
     restoreCart();
   }, []);
 
-  // 2. Lưu giỏ hàng mỗi khi danh sách món hàng thay đổi (Persistence Save)
   useEffect(() => {
-    if (!isLoaded) return; // Không ghi đè trước khi tải xong lần đầu
+    if (!isLoaded) return;
 
     const persistCart = async () => {
       try {
@@ -73,7 +43,6 @@ export const CartProvider = ({ children }) => {
     persistCart();
   }, [cartItems, isLoaded]);
 
-  // Thêm sản phẩm vào giỏ
   const addToCart = (product, quantity = 1) => {
     const validQty = Math.max(1, parseInt(quantity, 10) || 1);
 
@@ -81,7 +50,6 @@ export const CartProvider = ({ children }) => {
       const existingIndex = prevItems.findIndex((item) => item.id === product.id);
 
       if (existingIndex > -1) {
-        // Đã có trong giỏ -> Tăng số lượng
         const updated = [...prevItems];
         updated[existingIndex] = {
           ...updated[existingIndex],
@@ -90,7 +58,6 @@ export const CartProvider = ({ children }) => {
         return updated;
       }
 
-      // Chưa có -> Thêm mới vào đầu danh sách
       return [
         {
           id: product.id,
@@ -105,13 +72,11 @@ export const CartProvider = ({ children }) => {
     });
   };
 
-  // Cập nhật số lượng của một sản phẩm
   const updateQuantity = (productId, newQuantity) => {
     const qty = parseInt(newQuantity, 10);
 
     setCartItems((prevItems) => {
       if (qty <= 0) {
-        // Nếu số lượng <= 0 thì tự động xóa khỏi giỏ
         return prevItems.filter((item) => item.id !== productId);
       }
 
@@ -121,19 +86,14 @@ export const CartProvider = ({ children }) => {
     });
   };
 
-  // Xóa sản phẩm khỏi giỏ
   const removeFromCart = (productId) => {
     setCartItems((prevItems) => prevItems.filter((item) => item.id !== productId));
   };
 
-  // Xóa sạch giỏ hàng (sau khi Đặt hàng thành công)
   const clearCart = () => {
     setCartItems([]);
   };
 
-  // =========================================================================
-  // TÍNH TOÁN DẪN XUẤT (DERIVED STATE / TOTALS) DÙNG USEMEMO ĐỂ TỐI ƯU HIỆU NĂNG
-  // =========================================================================
   const { totalCount, subtotal, shippingFee, totalAmount } = useMemo(() => {
     let count = 0;
     let sum = 0;
@@ -145,7 +105,6 @@ export const CartProvider = ({ children }) => {
       sum += p * q;
     }
 
-    // Miễn phí vận chuyển nếu giỏ hàng rỗng hoặc đơn từ $50 trở lên
     const shipping = count === 0 ? 0 : sum >= 50 ? 0 : 5;
     const finalTotal = sum + shipping;
 
