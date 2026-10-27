@@ -27,31 +27,46 @@ Quy tắc bắt buộc:
   "recommendedProductIds": [các số ID nguyên phù hợp nhất]
 }`;
 
-      const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${CONFIG.GEMINI_MODEL}:generateContent?key=${CONFIG.GEMINI_API_KEY}`;
+      const modelsToTry = [...new Set([CONFIG.GEMINI_MODEL, 'gemini-3.5-flash-lite', 'gemini-2.5-flash'].filter(Boolean))];
+      let response = null;
+      let lastError = null;
 
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 10000);
+      for (const model of modelsToTry) {
+        try {
+          const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${CONFIG.GEMINI_API_KEY}`;
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 10000);
 
-      const response = await fetch(endpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        signal: controller.signal,
-        body: JSON.stringify({
-          contents: [
-            {
-              parts: [
-                { text: systemInstruction },
-                { text: `Nhu cầu khách hàng: "${userNeed}"` },
+          const res = await fetch(endpoint, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            signal: controller.signal,
+            body: JSON.stringify({
+              contents: [
+                {
+                  parts: [
+                    { text: systemInstruction },
+                    { text: `Nhu cầu khách hàng: "${userNeed}"` },
+                  ],
+                },
               ],
-            },
-          ],
-        }),
-      });
+            }),
+          });
+          clearTimeout(timeoutId);
 
-      clearTimeout(timeoutId);
+          if (res.ok) {
+            response = res;
+            break;
+          } else {
+            lastError = `Model ${model} báo lỗi: ${res.status}`;
+          }
+        } catch (e) {
+          lastError = e.message;
+        }
+      }
 
-      if (!response.ok) {
-        throw new Error(`Gemini API trả về mã lỗi: ${response.status}`);
+      if (!response) {
+        throw new Error(lastError || 'Không kết nối được tới dịch vụ Gemini');
       }
 
       const data = await response.json();

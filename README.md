@@ -1,12 +1,4 @@
 # MMA301 – ASSIGNMENT 02: INTEGRATED E-COMMERCE MOBILE APPLICATION
-
-- Môn học: MMA301 – Multiplatform Mobile App Development  
-- Nền tảng: React Native (Expo SDK 57) + JavaScript  
-- Sinh viên: Haonguyen08  
-- Lớp: MMA301  
-
----
-
 ## HỒ SƠ ĐÁNH GIÁ & DANH MỤC TÀI LIỆU (DOCUMENTATION INDEX)
 
 Tài liệu đồ án đã được chuẩn hóa và tách riêng thành từng tệp chuyên biệt theo đúng quy định mục 0.1 trong Student Guide:
