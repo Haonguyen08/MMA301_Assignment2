@@ -8,6 +8,7 @@ import {
   StyleSheet,
   SafeAreaView,
   Alert,
+  Linking,
 } from 'react-native';
 import { notificationService } from '../api/notificationService';
 import { firebaseService } from '../api/firebaseService';
@@ -33,21 +34,37 @@ export const SettingsScreen = () => {
     const res = await notificationService.requestPermission();
     setPermissionStatus(res.status);
     if (res.granted) {
-      Alert.alert('Thành công', 'Đã được cấp quyền gửi thông báo!');
+      Alert.alert(
+        'Đã sẵn sàng',
+        'Ứng dụng đã sẵn sàng gửi thông báo! Bạn có thể bấm "Bắn thông báo thử nghiệm (Flash Sale)" bên dưới để kiểm tra ngay.'
+      );
     } else {
       Alert.alert(
-        'Quyền bị từ chối',
-        'Ứng dụng không thể gửi thông báo đơn hàng do bạn đã từ chối quyền. Hãy mở Cài đặt thiết bị nếu muốn bật lại.'
+        'Quyền thông báo',
+        'Ứng dụng chưa thể hiển thị thông báo. Hãy bật quyền "Thông báo" cho Expo Go trong Cài đặt thiết bị.',
+        [
+          { text: 'Để sau', style: 'cancel' },
+          { text: 'Mở Cài đặt máy', onPress: () => Linking.openSettings() },
+        ]
       );
     }
   };
 
   const handleTestNotification = async () => {
     const sent = await notificationService.notifyFlashSale();
-    if (!sent) {
+    if (sent) {
+      Alert.alert(
+        'Thành công',
+        'Đã bắn thông báo Siêu Sale! Hãy vuốt thanh thông báo trên đỉnh màn hình xuống để kiểm tra.'
+      );
+    } else {
       Alert.alert(
         'Thông báo chưa gửi được',
-        'Vui lòng cấp quyền thông báo trước bằng cách bấm "Yêu cầu cấp quyền" bên trên.'
+        'Vui lòng kiểm tra quyền thông báo của Expo Go trong Cài đặt thiết bị.',
+        [
+          { text: 'Đóng', style: 'cancel' },
+          { text: 'Mở Cài đặt máy', onPress: () => Linking.openSettings() },
+        ]
       );
     }
   };
