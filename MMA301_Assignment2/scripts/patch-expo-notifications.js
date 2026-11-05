@@ -74,3 +74,26 @@ export default safePermissionsModule;`
     console.log('[patch] Patched NotificationPermissionsModule.native.js successfully.');
   }
 }
+
+const tsconfigFile = path.join(__dirname, '..', 'node_modules', 'expo-notifications', 'tsconfig.json');
+if (fs.existsSync(tsconfigFile)) {
+  fs.writeFileSync(tsconfigFile, '{}\n', 'utf8');
+  console.log('[patch] Replaced expo-notifications tsconfig.json with clean config.');
+}
+
+const baseDir = path.join(__dirname, '..', 'node_modules', 'expo-module-scripts');
+if (!fs.existsSync(baseDir)) {
+  fs.mkdirSync(baseDir, { recursive: true });
+}
+fs.writeFileSync(
+  path.join(baseDir, 'package.json'),
+  JSON.stringify({ name: 'expo-module-scripts', version: '1.0.0', main: 'index.js' }, null, 2),
+  'utf8'
+);
+fs.writeFileSync(
+  path.join(baseDir, 'tsconfig.base.json'),
+  JSON.stringify({ compilerOptions: { target: 'ESNext', module: 'commonjs', skipLibCheck: true } }, null, 2),
+  'utf8'
+);
+console.log('[patch] Ensured expo-module-scripts/tsconfig.base exists.');
+
